@@ -192,3 +192,59 @@ else:
 
         else:
             st.warning("Sin datos suficientes")
+
+st.markdown('<div class="title">CLARITY SYSTEM</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Stop overthinking. Decide clearly.</div>', unsafe_allow_html=True)
+
+if "step" not in st.session_state:
+    st.session_state.step = 1
+
+if st.session_state.step == 1:
+    if st.button("🚀 START ANALYSIS"):
+        st.session_state.step = 2
+
+elif st.session_state.step == 2:
+    problem = st.text_area("What are you stuck on?")
+
+    if st.button("Continue"):
+        st.session_state.problem = problem
+        st.session_state.step = 3
+        elif st.session_state.step == 3:
+    q1 = st.text_input("What is draining you?")
+    if st.button("Next"):
+        st.session_state.q1 = q1
+        st.session_state.step = 4
+
+elif st.session_state.step == 4:
+    q2 = st.text_input("What are you avoiding?")
+    if st.button("Next"):
+        st.session_state.q2 = q2
+        st.session_state.step = 5
+
+elif st.session_state.step == 5:
+    q3 = st.text_input("What happens if you don’t decide?")
+    if st.button("Analyze"):
+        st.session_state.q3 = q3
+        st.session_state.step = 6
+from openai import OpenAI
+
+client = OpenAI(api_key="TU_API_KEY")
+
+elif st.session_state.step == 6:
+
+    prompt = f"""
+    Problem: {st.session_state.problem}
+    Drain: {st.session_state.q1}
+    Avoidance: {st.session_state.q2}
+    No decision result: {st.session_state.q3}
+
+    Give a short, powerful psychological insight and direct advice.
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    st.markdown("### ⚡ Pattern Detected")
+    st.write(response.choices[0].message.content)
